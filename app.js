@@ -4,8 +4,10 @@ import cors from "cors"
 import bodyParser from "body-parser"
 import cookieParser from 'cookie-parser';
 import connectDB from "./db/db.js"
-import { registerUser, loginUser } from "./controller/userController.js"
-import { verifyJWT } from "./config/jwt.js"
+import userRouter from "./routes/userRoutes.js"
+import bookRouter from "./routes/bookRoutes.js"
+import transactionRouter from "./routes/transactionRoutes.js"
+
 
 
 
@@ -19,9 +21,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
+app.use('/uploads', express.static('uploads'));
 
-
-const whitelist = ['http://localhost:3000'];
+const whitelist = ['http://localhost:3000', 'https://cavegigitlclientside.netlify.app'];
 
 const corsOptions = {
     origin: function (origin, callback) {
@@ -39,10 +41,9 @@ app.use(cors(corsOptions));
 
 connectDB()
 
-app.post("/v1/api/register", registerUser)
-app.post("/v1/api/login", loginUser)
-
-
+app.use("/api/user", userRouter)
+app.use("/api/book", bookRouter)
+app.use("/api/transaction", transactionRouter)
 
 app.get("/", (req, res) => {
     res.status(200).send({ message: "Server is working" })
